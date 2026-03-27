@@ -6,54 +6,122 @@
   <title>팀채팅_회의록.docx</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: '맑은 고딕', 'Malgun Gothic', sans-serif; }
-    html, body { height: 100%; margin: 0; padding: 0; background: #f0f0f0; }
-    body { display: flex; }
-    .word-container { width: 100%; border-radius: 0; border: none; display: flex; flex-direction: column; height: 100vh; overflow: hidden; }
-    .titlebar { background: #2b579a; color: white; padding: 6px 12px; display: flex; align-items: center; justify-content: space-between; font-size: 12px; flex-shrink: 0; }
-    .titlebar-center { font-size: 13px; font-weight: 500; }
-    .titlebar-right { display: flex; gap: 14px; font-size: 13px; cursor: pointer; opacity: 0.9; }
-    .autosave-badge { background: #217346; color: white; font-size: 10px; padding: 2px 6px; border-radius: 2px; }
-    .ribbon { background: #f3f3f3; border-bottom: 1px solid #d0d0d0; flex-shrink: 0; }
-    .ribbon-tabs { display: flex; padding: 0 8px; }
-    .ribbon-tab { padding: 6px 12px; font-size: 12px; color: #333; cursor: pointer; border-bottom: 2px solid transparent; }
+    html, body { height: 100%; background: #c8c8c8; }
+    body { display: flex; flex-direction: column; overflow: hidden; }
+
+    /* ── 타이틀바 ── */
+    .titlebar { background: #2b579a; color: white; height: 30px; padding: 0 10px; display: flex; align-items: center; justify-content: space-between; flex-shrink: 0; }
+    .tb-left { display: flex; align-items: center; gap: 6px; }
+    .autosave { display: flex; align-items: center; gap: 4px; font-size: 11px; }
+    .autosave-dot { width: 8px; height: 8px; background: #6fcf97; border-radius: 50%; }
+    .tb-center { font-size: 12px; font-weight: 400; display: flex; align-items: center; gap: 4px; }
+    #doc-title { cursor: pointer; font-weight: 500; }
+    #doc-title:hover { text-decoration: underline; text-underline-offset: 2px; }
+    .tb-right { display: flex; align-items: center; gap: 2px; }
+    .tb-btn { width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; cursor: pointer; border-radius: 2px; font-size: 12px; }
+    .tb-btn:hover { background: rgba(255,255,255,0.15); }
+    .tb-btn.close:hover { background: #c42b1c; }
+
+    /* ── 리본 탭 ── */
+    .ribbon { background: #f3f3f3; flex-shrink: 0; border-bottom: 1px solid #bbb; }
+    .ribbon-tabs { display: flex; padding: 0 4px; background: #f3f3f3; }
+    .ribbon-tab { padding: 5px 11px; font-size: 12px; color: #333; cursor: pointer; border-bottom: 2px solid transparent; white-space: nowrap; }
     .ribbon-tab.active { border-bottom: 2px solid #2b579a; color: #2b579a; font-weight: 500; background: white; }
-    .ribbon-body { background: white; padding: 6px 12px; display: flex; align-items: center; gap: 16px; border-bottom: 1px solid #d0d0d0; flex-wrap: wrap; }
-    .font-select { background: white; border: 1px solid #ccc; padding: 2px 6px; font-size: 12px; border-radius: 2px; }
-    .font-size-select { background: white; border: 1px solid #ccc; padding: 2px 4px; font-size: 12px; width: 44px; border-radius: 2px; }
-    .ribbon-sep { width: 1px; background: #d0d0d0; height: 28px; }
-    .format-btns { display: flex; gap: 2px; }
-    .fmt-btn { background: none; border: none; padding: 3px 6px; font-size: 13px; cursor: pointer; border-radius: 2px; color: #333; }
-    .fmt-btn:hover { background: #e5e5e5; }
-    .name-badge { background: #fff3cd; border: 1px solid #ffc107; border-radius: 2px; padding: 2px 8px; font-size: 12px; color: #856404; cursor: pointer; }
-    .doc-area { background: #ababab; padding: 16px; flex: 1; overflow-y: auto; }
-    .doc-page { background: white; max-width: 680px; margin: 0 auto; padding: 40px 60px; box-shadow: 0 2px 6px rgba(0,0,0,0.15); min-height: 100%; }
-    .doc-header { font-size: 11px; color: #888; border-bottom: 1px solid #ddd; padding-bottom: 6px; margin-bottom: 20px; display: flex; justify-content: space-between; }
-    .doc-title-box { border: 2px solid #222; padding: 10px 16px; margin-bottom: 20px; }
-    .doc-title-text { font-size: 17px; font-weight: 700; color: #111; }
-    .messages { display: flex; flex-direction: column; gap: 4px; margin-bottom: 16px; }
-    .msg-row { display: flex; align-items: flex-start; gap: 8px; padding: 2px 0; }
-    .msg-bullet { width: 14px; height: 14px; border-radius: 50%; border: 1.5px solid #888; flex-shrink: 0; margin-top: 4px; }
-    .msg-content { font-size: 13.5px; color: #222; line-height: 1.7; }
-    .msg-name { font-weight: 700; font-size: 12px; color: #2b579a; margin-right: 6px; }
-    .msg-time { font-size: 11px; color: #aaa; margin-left: 6px; }
-    .input-area { background: white; border-top: 1px solid #d0d0d0; display: flex; align-items: center; padding: 8px 12px; gap: 8px; flex-shrink: 0; }
-    .chat-input { flex: 1; border: 1px solid #ccc; border-radius: 2px; padding: 6px 10px; font-size: 13px; font-family: '맑은 고딕', sans-serif; outline: none; }
+    .ribbon-tab:hover:not(.active) { background: #e8e8e8; }
+
+    /* ── 리본 바디 ── */
+    .ribbon-body { background: white; border-bottom: 1px solid #c8c8c8; display: flex; align-items: stretch; padding: 2px 4px; height: 72px; overflow: hidden; }
+    .rb-group { display: flex; flex-direction: column; align-items: center; padding: 0 8px; border-right: 1px solid #e0e0e0; }
+    .rb-group:last-child { border-right: none; }
+    .rb-group-label { font-size: 10px; color: #666; margin-top: auto; padding-top: 2px; white-space: nowrap; }
+    .rb-row { display: flex; align-items: center; gap: 1px; }
+    .rb-btn { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 2px 5px; border: none; background: none; cursor: pointer; border-radius: 2px; min-width: 26px; color: #333; font-size: 11px; gap: 2px; font-family: '맑은 고딕', sans-serif; }
+    .rb-btn:hover { background: #e5e5e5; }
+    .rb-btn.large { height: 56px; font-size: 10px; padding: 4px 8px; }
+    .rb-btn svg { width: 18px; height: 18px; flex-shrink: 0; }
+    .rb-small { display: flex; flex-direction: column; gap: 1px; margin-left: 4px; }
+    .rb-small .rb-btn { height: 18px; padding: 1px 6px; font-size: 11px; justify-content: flex-start; flex-direction: row; gap: 4px; min-width: 80px; }
+
+    /* font controls */
+    .font-box { display: flex; flex-direction: column; gap: 3px; justify-content: center; padding-top: 4px; }
+    .font-row { display: flex; align-items: center; gap: 2px; }
+    .font-select { border: 1px solid #ccc; padding: 1px 4px; font-size: 11px; border-radius: 1px; width: 136px; height: 22px; background: white; font-family: '맑은 고딕', sans-serif; }
+    .font-size-select { border: 1px solid #ccc; padding: 1px 2px; font-size: 11px; border-radius: 1px; width: 40px; height: 22px; background: white; }
+    .font-inc { border: 1px solid #ccc; background: white; padding: 0 4px; font-size: 11px; cursor: pointer; border-radius: 1px; height: 22px; font-family: '맑은 고딕', sans-serif; }
+    .font-inc:hover { background: #e5e5e5; }
+
+    /* 스타일 패널 */
+    .style-panel { display: flex; gap: 2px; align-items: center; padding-top: 2px; }
+    .style-btn { border: 1px solid #ddd; background: white; padding: 2px 8px; font-size: 11px; cursor: pointer; border-radius: 1px; height: 50px; min-width: 56px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; font-family: '맑은 고딕', sans-serif; }
+    .style-btn:hover { background: #e5e5e5; }
+    .style-btn.active { border: 2px solid #2b579a; background: #f0f4ff; }
+    .style-btn .s-preview { line-height: 1; }
+    .style-btn .s-label { font-size: 9px; color: #666; }
+
+    /* 이름 배지 */
+    .name-badge { background: #fff3cd; border: 1px solid #ffc107; border-radius: 2px; padding: 3px 10px; font-size: 11px; color: #856404; cursor: pointer; white-space: nowrap; }
+    .name-badge:hover { background: #ffe69c; }
+
+    /* ── 눈금자 ── */
+    .ruler { height: 18px; background: #e8e8e8; border-bottom: 1px solid #bbb; flex-shrink: 0; position: relative; overflow: hidden; }
+    .ruler-gray { position: absolute; top: 0; bottom: 0; background: #d0d0d0; }
+    .ruler-white { position: absolute; top: 0; bottom: 0; background: #e8e8e8; }
+
+    /* ── 문서 영역 ── */
+    .doc-area { flex: 1; overflow-y: auto; background: #c8c8c8; padding: 20px 0; }
+    .doc-page { background: white; width: 794px; min-height: 500px; margin: 0 auto; padding: 60px 80px 80px; box-shadow: 0 1px 5px rgba(0,0,0,0.3); }
+
+    .doc-top-info { display: flex; justify-content: space-between; font-size: 10px; color: #aaa; margin-bottom: 32px; padding-bottom: 8px; border-bottom: 1px solid #eee; }
+
+    /* 섹션 제목 */
+    .section-title-wrap { border: 2px solid #1a1a1a; padding: 10px 16px; margin-bottom: 24px; cursor: pointer; position: relative; }
+    .section-title-wrap:hover { border-color: #2b579a; background: #f5f8ff; }
+    .section-title-wrap:hover .edit-hint { opacity: 1; }
+    .section-title-text { font-size: 16px; font-weight: 700; color: #111; line-height: 1.4; }
+    .edit-hint { font-size: 10px; color: #2b579a; opacity: 0; transition: opacity 0.15s; margin-top: 3px; }
+
+    /* 메시지 */
+    .messages { display: flex; flex-direction: column; gap: 2px; }
+    .msg-row { display: flex; align-items: flex-start; gap: 10px; padding: 1px 0; }
+    .msg-bullet { width: 13px; height: 13px; border-radius: 50%; border: 1.5px solid #888; flex-shrink: 0; margin-top: 5px; }
+    .msg-content { font-size: 13px; color: #1a1a1a; line-height: 1.85; }
+    .msg-name { font-weight: 700; font-size: 11.5px; color: #2b579a; margin-right: 5px; }
+    .msg-time { font-size: 10px; color: #c0c0c0; margin-left: 5px; }
+    .msg-system { font-size: 11px; color: #bbb; font-style: italic; line-height: 2; }
+
+    /* ── 입력창 ── */
+    .input-area { background: #f5f5f5; border-top: 1px solid #c0c0c0; display: flex; align-items: center; padding: 7px 16px; gap: 8px; flex-shrink: 0; }
+    .chat-input { flex: 1; border: 1px solid #ccc; padding: 5px 10px; font-size: 13px; font-family: '맑은 고딕', sans-serif; outline: none; border-radius: 1px; background: white; }
     .chat-input:focus { border-color: #2b579a; }
-    .send-btn { background: #2b579a; color: white; border: none; padding: 6px 14px; border-radius: 2px; font-size: 12px; cursor: pointer; font-family: '맑은 고딕', sans-serif; }
+    .send-btn { background: #2b579a; color: white; border: none; padding: 6px 18px; font-size: 12px; cursor: pointer; font-family: '맑은 고딕', sans-serif; border-radius: 1px; }
     .send-btn:hover { background: #1e3f7a; }
-    .statusbar { background: #2b579a; color: white; font-size: 11px; padding: 3px 12px; display: flex; justify-content: space-between; flex-shrink: 0; }
-    .online-dot { display: inline-block; width: 8px; height: 8px; background: #6fcf97; border-radius: 50%; margin-right: 4px; }
-    .conn-status { font-size: 11px; }
-    .conn-status.offline { color: #ffcdd2; }
-    /* 닉네임 입력 모달 */
-    .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.4); display: flex; align-items: center; justify-content: center; z-index: 999; }
-    .modal-box { background: white; border-radius: 4px; padding: 28px 32px; width: 320px; box-shadow: 0 4px 20px rgba(0,0,0,0.2); }
-    .modal-title { font-size: 15px; font-weight: 700; color: #2b579a; margin-bottom: 6px; }
-    .modal-sub { font-size: 12px; color: #888; margin-bottom: 16px; }
-    .modal-input { width: 100%; border: 1px solid #ccc; border-radius: 2px; padding: 7px 10px; font-size: 13px; font-family: '맑은 고딕', sans-serif; outline: none; margin-bottom: 12px; }
+    .send-btn:disabled { background: #aaa; cursor: default; }
+
+    /* ── 상태바 ── */
+    .statusbar { background: #2b579a; color: white; font-size: 11px; padding: 2px 14px; display: flex; justify-content: space-between; align-items: center; flex-shrink: 0; height: 22px; }
+    .online-dot { display: inline-block; width: 7px; height: 7px; background: #6fcf97; border-radius: 50%; margin-right: 4px; }
+
+    /* ── 모달 공통 ── */
+    .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.45); display: flex; align-items: center; justify-content: center; z-index: 999; }
+    .modal-box { background: white; border-radius: 2px; padding: 28px 32px; width: 340px; box-shadow: 0 8px 32px rgba(0,0,0,0.25); border-top: 4px solid #2b579a; }
+    .modal-title { font-size: 15px; font-weight: 700; color: #2b579a; margin-bottom: 4px; }
+    .modal-sub { font-size: 12px; color: #888; margin-bottom: 18px; }
+    .modal-input { width: 100%; border: 1px solid #ccc; padding: 7px 10px; font-size: 13px; font-family: '맑은 고딕', sans-serif; outline: none; margin-bottom: 12px; border-radius: 1px; }
     .modal-input:focus { border-color: #2b579a; }
-    .modal-btn { width: 100%; background: #2b579a; color: white; border: none; padding: 8px; border-radius: 2px; font-size: 13px; cursor: pointer; font-family: '맑은 고딕', sans-serif; }
+    .modal-btn { width: 100%; background: #2b579a; color: white; border: none; padding: 9px; font-size: 13px; cursor: pointer; font-family: '맑은 고딕', sans-serif; border-radius: 1px; }
     .modal-btn:hover { background: #1e3f7a; }
+
+    /* ── 섹션 제목 편집 모달 ── */
+    .section-modal { position: fixed; inset: 0; background: rgba(0,0,0,0.45); display: none; align-items: center; justify-content: center; z-index: 998; }
+    .section-modal-box { background: white; border-radius: 2px; padding: 24px 28px; width: 480px; box-shadow: 0 8px 32px rgba(0,0,0,0.25); border-top: 4px solid #2b579a; }
+    .section-modal-box h3 { font-size: 14px; font-weight: 700; color: #2b579a; margin-bottom: 14px; }
+    .section-modal-input { width: 100%; border: 1px solid #ccc; padding: 8px 10px; font-size: 14px; font-weight: 700; font-family: '맑은 고딕', sans-serif; outline: none; margin-bottom: 14px; border-radius: 1px; }
+    .section-modal-input:focus { border-color: #2b579a; }
+    .section-modal-btns { display: flex; gap: 8px; justify-content: flex-end; }
+    .sm-cancel { background: white; border: 1px solid #ccc; padding: 6px 18px; font-size: 12px; cursor: pointer; border-radius: 1px; font-family: '맑은 고딕', sans-serif; }
+    .sm-cancel:hover { background: #f0f0f0; }
+    .sm-ok { background: #2b579a; color: white; border: none; padding: 6px 18px; font-size: 12px; cursor: pointer; border-radius: 1px; font-family: '맑은 고딕', sans-serif; }
+    .sm-ok:hover { background: #1e3f7a; }
   </style>
 </head>
 <body>
@@ -63,86 +131,208 @@
   <div class="modal-box">
     <div class="modal-title">📄 팀채팅_회의록.docx</div>
     <div class="modal-sub">채팅방에 입장하려면 이름을 입력하세요</div>
-    <input class="modal-input" id="name-input" placeholder="홍길동" maxlength="10" />
+    <input class="modal-input" id="name-input" placeholder="홍길동" maxlength="12" />
     <button class="modal-btn" id="name-confirm">입장하기</button>
   </div>
 </div>
 
-<div class="word-container">
-  <div class="titlebar">
-    <div style="display:flex;align-items:center;gap:8px;">
-      <span class="autosave-badge">자동 저장 ●</span>
-      <span style="font-size:14px;opacity:0.7;">▲ ▼</span>
+<!-- 섹션 제목 편집 모달 -->
+<div class="section-modal" id="section-modal">
+  <div class="section-modal-box">
+    <h3>✏️ 섹션 제목 변경</h3>
+    <input class="section-modal-input" id="section-input" placeholder="섹션 제목을 입력하세요" />
+    <div class="section-modal-btns">
+      <button class="sm-cancel" id="section-cancel">취소</button>
+      <button class="sm-ok" id="section-ok">확인</button>
     </div>
-    <div class="titlebar-center">팀채팅_회의록.docx — 호환성 모드</div>
-    <div class="titlebar-right"><span>－</span><span>□</span><span>✕</span></div>
-  </div>
-
-  <div class="ribbon">
-    <div class="ribbon-tabs">
-      <div class="ribbon-tab active">홈</div>
-      <div class="ribbon-tab">삽입</div>
-      <div class="ribbon-tab">그리기</div>
-      <div class="ribbon-tab">디자인</div>
-      <div class="ribbon-tab">레이아웃</div>
-      <div class="ribbon-tab">참조</div>
-      <div class="ribbon-tab">편집</div>
-      <div class="ribbon-tab">검토</div>
-      <div class="ribbon-tab">보기</div>
-    </div>
-    <div class="ribbon-body">
-      <select class="font-select"><option>맑은 고딕</option></select>
-      <select class="font-size-select"><option>10</option></select>
-      <div class="ribbon-sep"></div>
-      <div class="format-btns">
-        <button class="fmt-btn" style="font-weight:700">가</button>
-        <button class="fmt-btn" style="font-style:italic">가</button>
-        <button class="fmt-btn" style="text-decoration:underline">가</button>
-        <button class="fmt-btn">가<sub>2</sub></button>
-        <button class="fmt-btn">가<sup>2</sup></button>
-      </div>
-      <div class="ribbon-sep"></div>
-      <span style="font-size:12px;color:#555;">단락</span>
-      <div class="ribbon-sep"></div>
-      <span style="font-size:18px;font-weight:700;color:#2b579a;">가</span>
-      <span style="font-size:12px;color:#555;">스타일</span>
-      <div class="ribbon-sep"></div>
-      <span class="name-badge" id="name-display" onclick="changeName()">이름 설정 중...</span>
-    </div>
-  </div>
-
-  <div class="doc-area" id="doc-area">
-    <div class="doc-page">
-      <div class="doc-header">
-        <span>팀채팅_회의록.docx</span>
-        <span id="chat-date"></span>
-      </div>
-      <div class="doc-title-box">
-        <div class="doc-title-text">1. 문제 인식 (Problem)_창업 아이템의 필요성</div>
-      </div>
-      <div class="messages" id="msg-list"></div>
-    </div>
-  </div>
-
-  <div class="input-area">
-    <input class="chat-input" id="chat-input" placeholder="메시지를 입력하세요..." disabled />
-    <button class="send-btn" id="send-btn" disabled>전송</button>
-  </div>
-
-  <div class="statusbar">
-    <span id="page-info">2/2 페이지 &nbsp;&nbsp; 0개 단어 &nbsp;&nbsp; 한국어</span>
-    <span id="conn-status"><span class="online-dot"></span>연결 중...</span>
   </div>
 </div>
 
-<!-- ✅ Firebase SDK -->
+<!-- ── 타이틀바 ── -->
+<div class="titlebar">
+  <div class="tb-left">
+    <div class="autosave">
+      <span class="autosave-dot"></span>
+      <span>자동 저장</span>
+    </div>
+    <span style="color:rgba(255,255,255,0.4);margin:0 4px;">│</span>
+    <span style="font-size:14px;opacity:0.65;cursor:pointer;" title="실행 취소">↩</span>
+    <span style="font-size:14px;opacity:0.65;cursor:pointer;" title="다시 실행">↪</span>
+  </div>
+  <div class="tb-center">
+    <span id="doc-title" onclick="editTitle()" title="클릭해서 파일명 변경">팀채팅_회의록.docx</span>
+    <span style="opacity:0.5;font-weight:400;"> — 호환성 모드</span>
+  </div>
+  <div class="tb-right">
+    <span style="font-size:11px;opacity:0.8;margin-right:6px;">로그인</span>
+    <div class="tb-btn">－</div>
+    <div class="tb-btn">□</div>
+    <div class="tb-btn close">✕</div>
+  </div>
+</div>
+
+<!-- ── 리본 탭 ── -->
+<div class="ribbon">
+  <div class="ribbon-tabs">
+    <div class="ribbon-tab active">홈</div>
+    <div class="ribbon-tab">삽입</div>
+    <div class="ribbon-tab">그리기</div>
+    <div class="ribbon-tab">디자인</div>
+    <div class="ribbon-tab">레이아웃</div>
+    <div class="ribbon-tab">참조</div>
+    <div class="ribbon-tab">편지</div>
+    <div class="ribbon-tab">검토</div>
+    <div class="ribbon-tab">보기</div>
+    <div class="ribbon-tab">도움말</div>
+    <div class="ribbon-tab">Acrobat</div>
+  </div>
+
+  <div class="ribbon-body">
+
+    <!-- 클립보드 -->
+    <div class="rb-group">
+      <div class="rb-row" style="flex:1;align-items:center;">
+        <button class="rb-btn large">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#555" stroke-width="1.5"><rect x="9" y="2" width="11" height="14" rx="1"/><rect x="4" y="7" width="11" height="14" rx="1" fill="white"/></svg>
+          붙여넣기
+        </button>
+        <div class="rb-small">
+          <button class="rb-btn">✂ 잘라내기</button>
+          <button class="rb-btn">⧉ 복사</button>
+          <button class="rb-btn">🖌 서식 복사</button>
+        </div>
+      </div>
+      <div class="rb-group-label">클립보드</div>
+    </div>
+
+    <!-- 글꼴 -->
+    <div class="rb-group" style="align-items:flex-start;">
+      <div class="font-box">
+        <div class="font-row">
+          <select class="font-select">
+            <option>맑은 고딕(본문 한글)</option>
+            <option>맑은 고딕</option><option>굴림</option><option>돋움</option><option>바탕</option>
+          </select>
+          <select class="font-size-select">
+            <option>10</option><option>9</option><option>11</option><option>12</option>
+            <option>14</option><option>16</option><option>18</option><option>20</option>
+          </select>
+          <button class="font-inc" title="글자 크게">가↑</button>
+          <button class="font-inc" title="글자 작게">가↓</button>
+        </div>
+        <div class="font-row">
+          <button class="rb-btn" style="font-weight:700;font-size:14px;height:22px;min-width:24px;">가</button>
+          <button class="rb-btn" style="font-style:italic;font-size:14px;height:22px;min-width:24px;">가</button>
+          <button class="rb-btn" style="text-decoration:underline;font-size:14px;height:22px;min-width:24px;">가</button>
+          <button class="rb-btn" style="text-decoration:line-through;font-size:14px;height:22px;min-width:24px;">가</button>
+          <button class="rb-btn" style="height:22px;font-size:11px;min-width:22px;">x<sub>2</sub></button>
+          <button class="rb-btn" style="height:22px;font-size:11px;min-width:22px;">x<sup>2</sup></button>
+          <span style="width:1px;background:#e0e0e0;height:16px;display:inline-block;margin:0 2px;"></span>
+          <button class="rb-btn" style="height:22px;font-size:13px;min-width:24px;color:#c0392b;font-weight:700;">A</button>
+          <button class="rb-btn" style="height:22px;font-size:13px;min-width:24px;background:linear-gradient(transparent 55%,#ffe066 55%);">A</button>
+          <button class="rb-btn" style="height:22px;font-size:11px;min-width:24px;">가<span style="font-size:8px;">⚙</span></button>
+          <button class="rb-btn" style="height:22px;font-size:12px;min-width:24px;">Aa</button>
+        </div>
+      </div>
+      <div class="rb-group-label" style="margin-top:4px;">글꼴</div>
+    </div>
+
+    <!-- 단락 -->
+    <div class="rb-group" style="align-items:flex-start;">
+      <div class="font-box">
+        <div class="font-row">
+          <button class="rb-btn" style="height:22px;font-size:13px;min-width:24px;">≡•</button>
+          <button class="rb-btn" style="height:22px;font-size:13px;min-width:24px;">1.</button>
+          <button class="rb-btn" style="height:22px;font-size:13px;min-width:24px;">①</button>
+          <span style="width:1px;background:#e0e0e0;height:16px;display:inline-block;margin:0 2px;"></span>
+          <button class="rb-btn" style="height:22px;font-size:11px;min-width:24px;">⬅</button>
+          <button class="rb-btn" style="height:22px;font-size:11px;min-width:24px;">➡</button>
+          <span style="width:1px;background:#e0e0e0;height:16px;display:inline-block;margin:0 2px;"></span>
+          <button class="rb-btn" style="height:22px;font-size:11px;min-width:24px;">↕</button>
+          <button class="rb-btn" style="height:22px;font-size:11px;min-width:24px;">¶</button>
+        </div>
+        <div class="font-row">
+          <button class="rb-btn" style="height:22px;font-size:11px;min-width:28px;">◀◀</button>
+          <button class="rb-btn" style="height:22px;font-size:11px;min-width:28px;">▶▶</button>
+          <span style="width:1px;background:#e0e0e0;height:16px;display:inline-block;margin:0 2px;"></span>
+          <button class="rb-btn" style="height:22px;font-size:11px;min-width:24px;">⬛</button>
+          <button class="rb-btn" style="height:22px;font-size:11px;min-width:24px;">⊞</button>
+          <button class="rb-btn" style="height:22px;font-size:11px;min-width:24px;">⊟</button>
+          <span style="width:1px;background:#e0e0e0;height:16px;display:inline-block;margin:0 2px;"></span>
+          <button class="rb-btn" style="height:22px;font-size:11px;min-width:24px;">≡</button>
+          <button class="rb-btn" style="height:22px;font-size:11px;min-width:24px;">≣</button>
+          <button class="rb-btn" style="height:22px;font-size:11px;min-width:24px;">≡▾</button>
+        </div>
+      </div>
+      <div class="rb-group-label" style="margin-top:4px;">단락</div>
+    </div>
+
+    <!-- 스타일 -->
+    <div class="rb-group" style="flex:1;align-items:flex-start;min-width:0;">
+      <div class="style-panel">
+        <div class="style-btn active"><span class="s-preview" style="font-size:14px;">표준</span><span class="s-label">표준</span></div>
+        <div class="style-btn"><span class="s-preview" style="font-size:12px;color:#666;letter-spacing:-0.5px;">간격</span><span class="s-label">간격 없음</span></div>
+        <div class="style-btn"><span class="s-preview" style="font-size:15px;font-weight:700;color:#2b579a;">제목</span><span class="s-label">제목 1</span></div>
+        <div class="style-btn"><span class="s-preview" style="font-size:13px;font-weight:700;color:#2b579a;">제목</span><span class="s-label">제목 2</span></div>
+        <div class="style-btn"><span class="s-preview" style="font-size:19px;font-weight:700;color:#1f3864;">제목</span><span class="s-label">제목</span></div>
+        <div class="style-btn"><span class="s-preview" style="font-size:13px;color:#666;">부제</span><span class="s-label">부제</span></div>
+        <div class="style-btn"><span class="s-preview" style="font-size:13px;font-weight:700;color:#404040;">약한</span><span class="s-label">약한 강조</span></div>
+      </div>
+      <div class="rb-group-label" style="margin-top:auto;">스타일</div>
+    </div>
+
+    <!-- 편집 + 이름 -->
+    <div class="rb-group" style="align-items:center;justify-content:center;gap:8px;">
+      <div style="display:flex;flex-direction:column;gap:3px;">
+        <button class="rb-btn" style="height:24px;font-size:11px;flex-direction:row;gap:4px;min-width:60px;">🔍 찾기</button>
+        <button class="rb-btn" style="height:24px;font-size:11px;flex-direction:row;gap:4px;min-width:60px;">↔ 바꾸기</button>
+        <button class="rb-btn" style="height:24px;font-size:11px;flex-direction:row;gap:4px;min-width:60px;">↗ 선택</button>
+      </div>
+      <span style="width:1px;background:#e0e0e0;height:44px;"></span>
+      <span class="name-badge" id="name-display" onclick="changeName()">이름 설정 중...</span>
+      <div class="rb-group-label">편집</div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ── 눈금자 ── -->
+<div class="ruler" id="ruler"></div>
+
+<!-- ── 문서 영역 ── -->
+<div class="doc-area" id="doc-area">
+  <div class="doc-page">
+    <div class="doc-top-info">
+      <span id="doc-header-title">팀채팅_회의록.docx</span>
+      <span id="chat-date"></span>
+    </div>
+
+    <div class="section-title-wrap" id="section-title-wrap" onclick="openSectionModal()">
+      <div class="section-title-text" id="section-title-text">1. 문제 인식 (Problem)_창업 아이템의 필요성</div>
+      <div class="edit-hint">✏️ 클릭해서 제목 변경</div>
+    </div>
+
+    <div class="messages" id="msg-list"></div>
+  </div>
+</div>
+
+<!-- ── 입력창 ── -->
+<div class="input-area">
+  <input class="chat-input" id="chat-input" placeholder="메시지를 입력하세요..." disabled />
+  <button class="send-btn" id="send-btn" disabled>전송</button>
+</div>
+
+<!-- ── 상태바 ── -->
+<div class="statusbar">
+  <span id="page-info">1/1 페이지 &nbsp;│&nbsp; 0개 단어 &nbsp;│&nbsp; 한국어(한국)</span>
+  <span id="conn-status"><span class="online-dot"></span>연결 중...</span>
+</div>
+
+<!-- Firebase SDK -->
 <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-database-compat.js"></script>
 
 <script>
-  // ============================================================
-  // 🔧 여기에 Firebase 콘솔에서 복사한 firebaseConfig를 붙여넣으세요!
-  // ============================================================
   const firebaseConfig = {
     apiKey: "AIzaSyAUqCGHvlsz7kXLazJWOpjeBHMDlAbuiKU",
     authDomain: "works-a6ce9.firebaseapp.com",
@@ -152,12 +342,12 @@
     messagingSenderId: "792706433137",
     appId: "1:792706433137:web:fc05cac8b49bcee463dbd0"
   };
-  // ============================================================
 
   firebase.initializeApp(firebaseConfig);
   const db = firebase.database();
   const messagesRef = db.ref('chatroom/messages');
-  const onlineRef = db.ref('chatroom/online');
+  const onlineRef   = db.ref('chatroom/online');
+  const metaRef     = db.ref('chatroom/meta');
 
   let myName = '';
   let wordCount = 0;
@@ -167,128 +357,152 @@
   document.getElementById('chat-date').textContent =
     `${now.getFullYear()}년 ${now.getMonth()+1}월 ${now.getDate()}일`;
 
-  // 닉네임 모달
+  // ── 타이틀 편집 ──
+  function editTitle() {
+    const el = document.getElementById('doc-title');
+    const cur = el.textContent;
+    const inp = document.createElement('input');
+    inp.value = cur;
+    inp.style.cssText = 'background:transparent;border:none;border-bottom:1.5px solid white;color:white;font-size:12px;font-weight:500;font-family:맑은 고딕,sans-serif;outline:none;width:220px;';
+    el.replaceWith(inp); inp.focus(); inp.select();
+    function save() {
+      const v = inp.value.trim() || cur;
+      const span = document.createElement('span');
+      span.id = 'doc-title'; span.textContent = v;
+      span.onclick = editTitle; span.title = '클릭해서 파일명 변경';
+      inp.replaceWith(span);
+      document.getElementById('doc-header-title').textContent = v;
+      document.title = v;
+      metaRef.update({ docTitle: v });
+    }
+    inp.addEventListener('blur', save);
+    inp.addEventListener('keydown', e => { if (e.key === 'Enter') inp.blur(); });
+  }
+
+  // ── 섹션 제목 편집 ──
+  function openSectionModal() {
+    document.getElementById('section-input').value =
+      document.getElementById('section-title-text').textContent;
+    document.getElementById('section-modal').style.display = 'flex';
+    setTimeout(() => {
+      const inp = document.getElementById('section-input');
+      inp.focus(); inp.select();
+    }, 40);
+  }
+  function closeSectionModal() {
+    document.getElementById('section-modal').style.display = 'none';
+  }
+  function saveSectionTitle() {
+    const v = document.getElementById('section-input').value.trim();
+    if (!v) return;
+    document.getElementById('section-title-text').textContent = v;
+    metaRef.update({ sectionTitle: v });
+    closeSectionModal();
+  }
+  document.getElementById('section-cancel').addEventListener('click', closeSectionModal);
+  document.getElementById('section-ok').addEventListener('click', saveSectionTitle);
+  document.getElementById('section-input').addEventListener('keydown', e => {
+    if (e.key === 'Enter') saveSectionTitle();
+    if (e.key === 'Escape') closeSectionModal();
+  });
+
+  // meta 실시간 동기화 (접속한 모두에게 반영)
+  metaRef.on('value', snap => {
+    const d = snap.val();
+    if (!d) return;
+    if (d.docTitle) {
+      const el = document.getElementById('doc-title');
+      if (el) el.textContent = d.docTitle;
+      document.getElementById('doc-header-title').textContent = d.docTitle;
+      document.title = d.docTitle;
+    }
+    if (d.sectionTitle) {
+      document.getElementById('section-title-text').textContent = d.sectionTitle;
+    }
+  });
+
+  // ── 닉네임 모달 ──
   const modal = document.getElementById('modal');
   const nameInput = document.getElementById('name-input');
-  const nameConfirm = document.getElementById('name-confirm');
-  const nameDisplay = document.getElementById('name-display');
   const chatInput = document.getElementById('chat-input');
-  const sendBtn = document.getElementById('send-btn');
+  const sendBtn   = document.getElementById('send-btn');
+  const nameDisplay = document.getElementById('name-display');
 
   nameInput.focus();
 
   function enterChat() {
-    const val = nameInput.value.trim();
-    if (!val) { nameInput.focus(); return; }
-    myName = val;
+    const v = nameInput.value.trim();
+    if (!v) { nameInput.focus(); return; }
+    myName = v;
     nameDisplay.textContent = '✏️ ' + myName;
     modal.style.display = 'none';
-    chatInput.disabled = false;
-    sendBtn.disabled = false;
+    chatInput.disabled = false; sendBtn.disabled = false;
     chatInput.focus();
 
-    // 접속자 등록
     const myOnlineRef = onlineRef.push({ name: myName });
     myOnlineRef.onDisconnect().remove();
 
-    // 접속자 수 감시
     onlineRef.on('value', snap => {
-      const count = snap.numChildren();
       document.getElementById('conn-status').innerHTML =
-        `<span class="online-dot"></span>${count} 명 접속 중`;
+        `<span class="online-dot"></span>${snap.numChildren()}명 접속 중`;
     });
 
-    // 입장 메시지
-    messagesRef.push({
-      name: '시스템',
-      text: `${myName}님이 입장했습니다.`,
-      time: Date.now(),
-      system: true
-    });
+    messagesRef.push({ name: '시스템', text: `${myName}님이 입장했습니다.`, time: Date.now(), system: true });
   }
 
-  nameConfirm.addEventListener('click', enterChat);
+  document.getElementById('name-confirm').addEventListener('click', enterChat);
   nameInput.addEventListener('keydown', e => { if (e.key === 'Enter') enterChat(); });
 
   function changeName() {
-    const newName = prompt('새 이름을 입력하세요:', myName);
-    if (newName && newName.trim()) {
-      myName = newName.trim();
-      nameDisplay.textContent = '✏️ ' + myName;
-    }
+    const n = prompt('새 이름을 입력하세요:', myName);
+    if (n && n.trim()) { myName = n.trim(); nameDisplay.textContent = '✏️ ' + myName; }
   }
 
-  // 메시지 수신
-  messagesRef.limitToLast(100).on('child_added', snap => {
-    const msg = snap.val();
-    addMessageToDOM(msg);
-  });
+  // ── 메시지 ──
+  messagesRef.limitToLast(100).on('child_added', snap => addMsg(snap.val()));
 
-  function addMessageToDOM(msg) {
+  function addMsg(msg) {
     const list = document.getElementById('msg-list');
     const row = document.createElement('div');
     row.className = 'msg-row';
-
     const bullet = document.createElement('div');
     bullet.className = 'msg-bullet';
-    if (msg.system) bullet.style.borderColor = '#aaa';
-
+    if (msg.system) bullet.style.borderColor = '#ccc';
     const content = document.createElement('div');
-    content.className = 'msg-content';
 
     if (msg.system) {
-      content.style.color = '#999';
-      content.style.fontSize = '12px';
+      content.className = 'msg-system';
       content.textContent = msg.text;
     } else {
+      content.className = 'msg-content';
       const t = new Date(msg.time);
-      const timeStr = `${String(t.getHours()).padStart(2,'0')}:${String(t.getMinutes()).padStart(2,'0')}`;
+      const ts = `${String(t.getHours()).padStart(2,'0')}:${String(t.getMinutes()).padStart(2,'0')}`;
       content.innerHTML =
-        `<span class="msg-name">${escapeHtml(msg.name)}</span>` +
-        `${escapeHtml(msg.text)}` +
-        `<span class="msg-time">${timeStr}</span>`;
+        `<span class="msg-name">${esc(msg.name)}</span>${esc(msg.text)}<span class="msg-time">${ts}</span>`;
       wordCount += msg.text.split(' ').length;
       document.getElementById('page-info').textContent =
-        `2/2 페이지 \u00a0\u00a0 ${wordCount}개 단어 \u00a0\u00a0 한국어`;
+        `1/1 페이지 \u00a0│\u00a0 ${wordCount}개 단어 \u00a0│\u00a0 한국어(한국)`;
     }
-
-    row.appendChild(bullet);
-    row.appendChild(content);
+    row.appendChild(bullet); row.appendChild(content);
     list.appendChild(row);
-
-    const docArea = document.getElementById('doc-area');
-    docArea.scrollTop = docArea.scrollHeight;
+    document.getElementById('doc-area').scrollTop = 99999;
   }
 
-  // 메시지 전송
   function sendMessage() {
-    const val = chatInput.value.trim();
-    if (!val || !myName) return;
-    messagesRef.push({
-      name: myName,
-      text: val,
-      time: Date.now(),
-      system: false
-    });
+    const v = chatInput.value.trim();
+    if (!v || !myName) return;
+    messagesRef.push({ name: myName, text: v, time: Date.now(), system: false });
     chatInput.value = '';
   }
-
   sendBtn.addEventListener('click', sendMessage);
-  chatInput.addEventListener('keydown', e => {
-    if (e.key === 'Enter') sendMessage();
-  });
+  chatInput.addEventListener('keydown', e => { if (e.key === 'Enter') sendMessage(); });
 
-  // 연결 상태
   db.ref('.info/connected').on('value', snap => {
-    const el = document.getElementById('conn-status');
-    if (!snap.val()) {
-      el.innerHTML = `<span style="color:#ffcdd2;">● 연결 끊김</span>`;
-    }
+    if (!snap.val())
+      document.getElementById('conn-status').innerHTML = `<span style="color:#ffcdd2;">● 연결 끊김</span>`;
   });
 
-  function escapeHtml(str) {
-    return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
-  }
+  function esc(s) { return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 </script>
 </body>
 </html>
